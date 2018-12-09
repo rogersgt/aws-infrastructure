@@ -83,7 +83,7 @@ Resources:
                 Action:
                   - cloudformation:UpdateTerminationProtection
                 Resource: '*'
-              
+
               - Effect: Allow
                 Action:
                   - cloudformation:*
@@ -123,8 +123,6 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:*
-                  - s3:ListObjects
-                  - s3:ListBuckets
                 Resource: '*'
 
         - PolicyName: !Join ['-', [!Ref 'Name', SES, Policy]]

@@ -18,7 +18,7 @@ jobs:
               --template-body file://resources/group.app.yml \
               --stack-name iam-app-group \
               --capabilities CAPABILITY_NAMED_IAM \
-              --region $AWS_REGION
+              --region $AWS_REGION || echo 'No updates to be performed'
 
 workflows:
   version: 2

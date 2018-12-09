@@ -54,6 +54,7 @@ Resources:
                   - ec2:DescribeSecurityGroups
                   - iam:GetRole
                   - iam:ListRoles
+                  - iam:PutRolePolicy
                   - iam:CreateRole
                   - sns:CreateTopic
                   - sns:DeleteTopic

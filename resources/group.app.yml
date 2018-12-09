@@ -64,13 +64,7 @@ Resources:
                   - sns:Subscribe
                   - sns:Unsubscribe
                   - sns:SetTopicAttributes
-                  - lambda:CreateFunction
-                  - lambda:ListFunctions
-                  - lambda:ListEventSourceMappings
-                  - lambda:CreateEventSourceMapping
-                  - lambda:DeleteEventSourceMapping
-                  - lambda:GetFunctionConfiguration
-                  - lambda:DeleteFunction
+                  - lambda:*
                   - apigateway:*
 
               - Action:

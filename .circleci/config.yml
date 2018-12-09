@@ -17,7 +17,8 @@ jobs:
             aws cloudformation update-stack \
               --template-body file://resources/group.app.yml \
               --stack-name iam-app-group \
-              --capabilities CAPABILITY_NAMED_IAM
+              --capabilities CAPABILITY_NAMED_IAM \
+              --region $AWS_REGION
 
 workflows:
   version: 2

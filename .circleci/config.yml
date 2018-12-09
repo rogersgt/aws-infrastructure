@@ -19,6 +19,15 @@ jobs:
               --stack-name iam-app-group \
               --capabilities CAPABILITY_NAMED_IAM \
               --region $AWS_REGION || echo 'No updates to be performed'
+      - run:
+          name: Update Config Bucket
+          command: |
+            aws cloudformation update-stack \
+            --template-body file://resources/s3.config-bucket.yml \
+            --parameters ParameterKey=Name,ParameterValue=rogers-config \
+            --stack-name s3-config-bucket \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --region $AWS_REGION || echo 'No updates to be performed'
 
 workflows:
   version: 2

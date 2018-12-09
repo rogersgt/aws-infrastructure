@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+
+  Name:
+    Type: String
+    Description: Name of s3 bucket
+
+  ACL:
+    Type: String
+    Default: Private
+    AllowedValues: [AuthenticatedRead,AwsExecRead,BucketOwnerRead,BucketOwnerFullControl,LogDeliveryWrite,Private,PublicRead,PublicReadWrite]
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: !Ref 'ACL'
+      BucketName: !Ref 'Name'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration: 
+          - ServerSideEncryptionByDefault: 
+              SSEAlgorithm: AES256
+      Tags:
+        - Key: Name
+          Value: !Ref 'Name'
+      VersioningConfiguration:
+        Status: Enabled 
+
+Outputs:
+  Bucket:
+    Description: S3 Bucket
+    Value: !Ref Bucket

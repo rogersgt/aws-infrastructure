@@ -15,7 +15,7 @@ jobs:
           name: Update IAM App group
           command: |
             aws cloudformation update-stack \
-              --template-file file://resources/group.app.yml \
+              --template-path file://resources/group.app.yml \
               --stack-name iam-app-group \
               --capabilities CAPABILITY_NAMED_IAM
 

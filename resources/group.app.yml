@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  Name:
+    Type: String
+    Default: App
+
+
+Resources:
+  Group:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Ref 'Name'
+      Path: '/'
+      Policies:
+
+        - PolicyName: !Join ['-', [!Ref 'Name', 'DynamoDB', Policy]]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+            # This is equivalent to DynamoDBFullAccess
+              - Effect: Allow
+                Resource: "*"
+                Action:
+                  - dynamodb:*
+                  - dax:*
+                  - application-autoscaling:DeleteScalingPolicy
+                  - application-autoscaling:DeregisterScalableTarget
+                  - application-autoscaling:DescribeScalableTargets
+                  - application-autoscaling:DescribeScalingActivities
+                  - application-autoscaling:DescribeScalingPolicies
+                  - application-autoscaling:PutScalingPolicy
+                  - application-autoscaling:RegisterScalableTarget
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarmHistory
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:DescribeAlarmsForMetric
+                  - cloudwatch:GetMetricStatistics
+                  - cloudwatch:ListMetrics
+                  - cloudwatch:PutMetricAlarm
+                  - datapipeline:ActivatePipeline
+                  - datapipeline:CreatePipeline
+                  - datapipeline:DeletePipeline
+                  - datapipeline:DescribeObjects
+                  - datapipeline:DescribePipelines
+                  - datapipeline:GetPipelineDefinition
+                  - datapipeline:ListPipelines
+                  - datapipeline:PutPipelineDefinition
+                  - datapipeline:QueryObjects
+                  - ec2:DescribeVpcs
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - iam:GetRole
+                  - iam:ListRoles
+                  - sns:CreateTopic
+                  - sns:DeleteTopic
+                  - sns:ListSubscriptions
+                  - sns:ListSubscriptionsByTopic
+                  - sns:ListTopics
+                  - sns:Subscribe
+                  - sns:Unsubscribe
+                  - sns:SetTopicAttributes
+                  - lambda:CreateFunction
+                  - lambda:ListFunctions
+                  - lambda:ListEventSourceMappings
+                  - lambda:CreateEventSourceMapping
+                  - lambda:DeleteEventSourceMapping
+                  - lambda:GetFunctionConfiguration
+                  - lambda:DeleteFunction
+
+              - Action:
+                  - iam:PassRole
+                Effect: Allow
+                Resource: "*"
+                Condition:
+                  StringLike:
+                    iam:PassedToService:
+                      - application-autoscaling.amazonaws.com
+                      - dax.amazonaws.com
+
+              - Effect: Deny
+                Action:
+                  - cloudformation:UpdateTerminationProtection
+                Resource: '*'
+              
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource: '*'
+
+              - Effect: Allow
+                Action:
+                  - iam:CreateServiceLinkedRole
+                Resource: arn:aws:iam::*:role/aws-service-role/replication.dynamodb.amazonaws.com/AWSServiceRoleForDynamoDBReplication
+                Condition:
+                  StringLike:
+                    iam:AWSServiceName: replication.dynamodb.amazonaws.com
+
+              - Effect: Deny
+                Action:
+                  - dynamodb:DeleteTable
+                Resource: '*'
+
+        
+        - PolicyName: !Join ['-', [!Ref 'Name', KMS, Policy]]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:Encrypt
+                Resource: '*'
+
+
+        - PolicyName: !Join ['-', [!Ref 'Name', S3, Policy]]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              - Effect: Allow
+                Action:
+                  - s3:*
+                  - s3:ListObjects
+                  - s3:ListBuckets
+                Resource: '*'
+
+        - PolicyName: !Join ['-', [!Ref 'Name', SES, Policy]]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              - Effect: Allow
+                Action:
+                  - ses:*
+                Resource: '*'
+
+        - PolicyName: !Join ['-', [!Ref 'Name', SQS, Policy]]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              - Effect: Allow
+                Action:
+                  - sqs:*
+                Resource: !Join ['', ['arn:aws:sqs:*:', !Ref 'AWS::AccountId', ':*']]
+
+Outputs:
+  Group:
+    Description: IAM group for applications
+    Value: !Ref Group

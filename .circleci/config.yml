@@ -1,0 +1,31 @@
+defaults: &defaults
+  working_directory: ~/app
+  docker:
+    - image: gradyrogers/awscli
+
+version: 2
+jobs:
+
+  deploy:
+    <<: *defaults
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Update IAM App group
+          command: |
+            aws cloudformation update-stack \
+              --template-file file:/resources/group.app.yml \
+              --stack-name iam-app-group \
+              --capabilities CAPABILITY_NAMED_IAM
+
+workflows:
+  version: 2
+
+  deployment:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master

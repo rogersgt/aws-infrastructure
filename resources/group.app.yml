@@ -39,6 +39,7 @@ Resources:
                   - cloudwatch:GetMetricStatistics
                   - cloudwatch:ListMetrics
                   - cloudwatch:PutMetricAlarm
+                  - logs:*
                   - datapipeline:ActivatePipeline
                   - datapipeline:CreatePipeline
                   - datapipeline:DeletePipeline

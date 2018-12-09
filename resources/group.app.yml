@@ -69,6 +69,7 @@ Resources:
                   - lambda:DeleteEventSourceMapping
                   - lambda:GetFunctionConfiguration
                   - lambda:DeleteFunction
+                  - apigateway:*
 
               - Action:
                   - iam:PassRole

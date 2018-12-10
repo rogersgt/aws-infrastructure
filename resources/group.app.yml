@@ -67,6 +67,7 @@ Resources:
                   - sns:SetTopicAttributes
                   - lambda:*
                   - apigateway:*
+                  - cloudfront:*
 
               - Action:
                   - iam:PassRole

@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  RootUsername:
+    Type: String
+
+  RootPassword:
+    Type: String
+    NoEcho: True
+
+  AllocatedStorage:
+    Type: Number
+    Default: 5
+
+  BackupRetention:
+    Type: Number
+    Default: 1
+
+Resources:
+  Instance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: postgres
+      EngineVersion: '15.4'
+      MasterUsername: !Ref 'RootUsername'
+      MasterUserPassword: !Ref 'RootPassword'
+      Port: 5432
+      DBInstanceClass: db.t4g.micro
+      AllocatedStorage: !Ref 'AllocatedStorage'
+      BackupRetentionPeriod: !Ref 'BackupRetention'
+      DeletionProtection: True
+      StorageEncrypted: True
+
+Outputs:
+  DbUri:
+    Value: !GetAtt Instance.Endpoint.Address
+
+  RootUsername:
+    Value: !Ref 'RootUsername'
+
+  Port:
+    Value: '5432'

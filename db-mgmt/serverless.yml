@@ -23,7 +23,7 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - ssm:GetParameter*
+            - ssm:*Parameter*
           Resource:
             - arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/ci/*
         - Effect: Allow
@@ -64,3 +64,8 @@ functions:
     handler: src/index.rotateSnapshots
     events:
       - schedule: cron(0 5 * * ? *)
+
+  rotateRootPassword:
+    handler: src/index.rotateRootPassword
+    events:
+      - schedule: cron(0 4 * * ? *)

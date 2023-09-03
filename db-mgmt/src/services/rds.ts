@@ -2,6 +2,7 @@ import {
   RDSClient,
   DescribeDBInstanceAutomatedBackupsCommand,
   DeleteDBInstanceAutomatedBackupCommand,
+  ModifyDBInstanceCommand,
 } from '@aws-sdk/client-rds';
 
 const rdsClient = new RDSClient();
@@ -19,4 +20,12 @@ export async function deleteSystemSnapshot(arn: string) {
     DBInstanceAutomatedBackupsArn: arn,
   });
   await rdsClient.send(cmd);
+}
+
+export async function updateRootPassword(instanceId: string, newPassword: string) {
+  const cmd = new ModifyDBInstanceCommand({
+    MasterUserPassword: newPassword,
+    DBInstanceIdentifier: instanceId
+  });
+  return rdsClient.send(cmd);
 }

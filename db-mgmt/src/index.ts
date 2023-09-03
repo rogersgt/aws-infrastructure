@@ -1,8 +1,10 @@
-import { deleteSystemSnapshot, listSystemSnapshots } from './services/rds';
+import { deleteSystemSnapshot, listSystemSnapshots, updateRootPassword } from './services/rds';
 import { differenceInCalendarDays } from 'date-fns';
 import logger from './logger';
+import { generate } from 'generate-password';
+import { upsertParameter } from './services/ssm';
 
-// const { INSTANCE_ID } = process.env;
+const { INSTANCE_ID } = process.env;
 
 export const rotateSnapshots = async () => {
   // if (!INSTANCE_ID) {
@@ -28,3 +30,18 @@ export const rotateSnapshots = async () => {
     logger.debug('No older backups found. Skipping snapshot rotation');
   }
 };
+
+export async function rotateRootPassword() {
+  if (!INSTANCE_ID) {
+    throw new Error('INSTANCE is not defined');
+  }
+
+  const newPassword = generate({
+    numbers: true,
+    exclude: '@/:',
+    length: 20,
+    symbols: true,
+  });
+  await updateRootPassword(INSTANCE_ID, newPassword);
+  await upsertParameter('/ci/rds/root/password', newPassword, true);
+}

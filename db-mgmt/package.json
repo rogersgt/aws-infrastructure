@@ -1,0 +1,25 @@
+{
+  "name": "db-mgmt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "sls offline start",
+    "build": "sls package",
+    "deploy": "STAGE=prod sls deploy --force",
+    "invoke:rotateSnapshots": "sls invoke local -f rotateSnapshots"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-rds": "3.405.0",
+    "date-fns": "2.30.0",
+    "serverless": "3.34.0",
+    "typescript": "5.2.2",
+    "winston": "3.10.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "12.0.4",
+    "serverless-plugin-typescript": "2.1.2"
+  }
+}

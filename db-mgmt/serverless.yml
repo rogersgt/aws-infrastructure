@@ -1,0 +1,66 @@
+service: rds-db-mgmt
+frameworkVersion: '3'
+
+useDotenv: true
+
+configValidationMode: warn
+
+deprecationNotificationMode: warn:summary
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  stage: ${env:STAGE, 'dev'}
+  stackName: ${self:service}-${self:provider.stage}
+  region: ${env:AWS_REGION, 'us-east-1'}
+  # profile: ${env:AWS_PROFILE}
+  eventBridge:
+    useCloudFormation: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter*
+          Resource:
+            - arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/ci/*
+        - Effect: Allow
+          Action:
+            - kms:*
+          Resource:
+            - '*'
+        - Effect: Allow
+          Action:
+            - rds:*
+          Resource:
+            - '*'
+  timeout: 15
+  vpc:
+    # TODO: Import all these network values
+    securityGroupIds:
+      - sg-06b681a3f0f0aa987
+    subnetIds:
+      - subnet-3fbf8462
+      - subnet-227b6546
+      - subnet-20696c0f
+      - subnet-3ffb3475
+      - subnet-2096392f
+      - subnet-96a289a9
+  environment:
+    LOG_LEVEL: ${env:LOG_LEVEL, 'debug'}
+    INSTANCE_ID: ${self:custom.instanceId}
+
+custom:
+  instanceId: ${cf:rds-db-instance.DbInstanceId}
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+
+functions:
+  rotateSnapshots:
+    handler: src/index.rotateSnapshots
+    events:
+      - schedule: cron(0 5 * * ? *)

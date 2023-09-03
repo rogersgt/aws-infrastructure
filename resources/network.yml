@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  PersonalIp:
+    Type: String
+    Default: ''
+
+  VpcId:
+    Type: String
+    Description: Default VPC ID
+
+Conditions:
+  CreatePersonalIpRule: !Not [!Equals [!Ref 'PersonalIp', '']]
+
+Resources:
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: App DB
+      VpcId: !Ref 'VpcId'
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: tcp
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: '-1'
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: App DB
+      VpcId: !Ref 'VpcId'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref AppSecurityGroup
+          FromPort: 5432
+          ToPort: 5432
+          IpProtocol: tcp
+        - !If
+          - CreatePersonalIpRule
+          - CidrIp: !Sub '${PersonalIp}/32'
+            FromPort: 5432
+            ToPort: 5432
+            IpProtocol: tcp
+          - !Ref 'AWS::NoValue'
+
+Outputs:
+  AppSecurityGroupId:
+    Value: !Ref AppSecurityGroup
+    Export:
+      Name: AppSecurityGroupId
+
+  DBSecurityGroupId:
+    Value: !Ref DBSecurityGroup
+    Export:
+      Name: DBSecurityGroupId

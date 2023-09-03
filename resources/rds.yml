@@ -49,6 +49,8 @@ Resources:
       BackupRetentionPeriod: !Ref 'BackupRetention'
       DeletionProtection: True
       StorageEncrypted: True
+      VPCSecurityGroups:
+        - !ImportValue DBSecurityGroupId
 
 Outputs:
   DbUri:

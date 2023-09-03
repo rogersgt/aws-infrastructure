@@ -16,7 +16,26 @@ Parameters:
     Type: Number
     Default: 1
 
+  HostedZoneName:
+    Type: String
+
+  DbSubdomain:
+    Type: String
+    Default: db
+    Description: Route53 subdomain to prepend to HostedZoneName
+
 Resources:
+  DnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      Comment: Shared App DB DNS Record
+      HostedZoneName: !Sub '${HostedZoneName}.'
+      Name: !Sub '${DbSubdomain}.${HostedZoneName}'
+      ResourceRecords: 
+        - !GetAtt Instance.Endpoint.Address
+      TTL: 300
+      Type: CNAME
+
   Instance:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -33,7 +52,7 @@ Resources:
 
 Outputs:
   DbUri:
-    Value: !GetAtt Instance.Endpoint.Address
+    Value: !Sub '${DbSubdomain}.${HostedZoneName}'
 
   RootUsername:
     Value: !Ref 'RootUsername'
